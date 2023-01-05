@@ -63,7 +63,9 @@ class TrainDataset(Dataset):
         encoded_passages.append(self.create_one_example(pos_psg))
 
         negative_size = self.data_args.train_n_passages - 1
-        if len(group_negatives) < negative_size:
+        if len(group_negatives) == 0:
+            negs = []
+        elif len(group_negatives) < negative_size:
             negs = random.choices(group_negatives, k=negative_size)
         elif self.data_args.train_n_passages == 1:
             negs = []
