@@ -22,6 +22,10 @@ logger = logging.getLogger(__name__)
 def main():
     parser = HfArgumentParser((ModelArguments, DataArguments, TrainingArguments))
 
+    # HACK: local-rank causes error with HfArgumentParser
+    if sys.argv[1].startswith("--local-rank"):
+        sys.argv[1] = f"--local_rank={sys.argv[1].split('=')[-1]}"
+
     if len(sys.argv) == 2 and sys.argv[1].endswith(".json"):
         model_args, data_args, training_args = parser.parse_json_file(json_file=os.path.abspath(sys.argv[1]))
     else:
