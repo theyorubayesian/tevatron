@@ -24,8 +24,13 @@ class HFTrainDataset:
         self.dataset = load_dataset(data_args.dataset_name,
                                     data_args.dataset_language,
                                     data_files=data_files, cache_dir=cache_dir, use_auth_token=True)[data_args.dataset_split]
-        self.preprocessor = PROCESSOR_INFO[data_args.dataset_name][0] if data_args.dataset_name in PROCESSOR_INFO\
-            else DEFAULT_PROCESSORS[0]
+        if data_args.use_default_processor:
+            self.preprocessor = DEFAULT_PROCESSORS[0]
+        elif data_args.dataset_name in PROCESSOR_INFO:
+            self.preprocessor = PROCESSOR_INFO[data_args.dataset_name][0]
+        else:
+            self.preprocessor = DEFAULT_PROCESSORS[0]
+        
         self.tokenizer = tokenizer
         self.q_max_len = data_args.q_max_len
         self.p_max_len = data_args.p_max_len
@@ -54,8 +59,12 @@ class HFQueryDataset:
         self.dataset = load_dataset(data_args.dataset_name,
                                     data_args.dataset_language,
                                     data_files=data_files, cache_dir=cache_dir, use_auth_token=True)[data_args.dataset_split]
-        self.preprocessor = PROCESSOR_INFO[data_args.dataset_name][1] if data_args.dataset_name in PROCESSOR_INFO \
-            else DEFAULT_PROCESSORS[1]
+        if data_args.use_default_processor:
+            self.preprocessor = DEFAULT_PROCESSORS[1]
+        elif data_args.dataset_name in PROCESSOR_INFO:
+            self.preprocessor = PROCESSOR_INFO[data_args.dataset_name][1]
+        else:
+            self.preprocessor = DEFAULT_PROCESSORS[1]
         self.tokenizer = tokenizer
         self.q_max_len = data_args.q_max_len
         self.proc_num = data_args.dataset_proc_num
@@ -84,8 +93,14 @@ class HFCorpusDataset:
         script_prefix = data_args.dataset_name
         if script_prefix.endswith('-corpus'):
             script_prefix = script_prefix[:-7]
-        self.preprocessor = PROCESSOR_INFO[script_prefix][2] \
-            if script_prefix in PROCESSOR_INFO else DEFAULT_PROCESSORS[2]
+        
+        if data_args.use_default_processor:
+            self.preprocessor = DEFAULT_PROCESSORS[2]
+        elif script_prefix in PROCESSOR_INFO:
+            self.preprocessor = PROCESSOR_INFO[script_prefix][2]
+        else:
+            self.preprocessor = DEFAULT_PROCESSORS[2]
+        
         self.tokenizer = tokenizer
         self.p_max_len = data_args.p_max_len
         self.proc_num = data_args.dataset_proc_num
